@@ -4,11 +4,17 @@ start:
 stop:
 	docker-compose down
 
-shell:
-	docker-compose run --rm app /bin/ash
+unitTest:
+	docker-compose run --rm --workdir="/opt/app/contents" app sh -c "npm install && npm test"
 
-# This assumes that the container name is basic-docker_app_1
-# but it could sometimes change
-# you may do `docker ps` to list down all running containers
+shell:
+	docker-compose run --rm --workdir="/opt/app/contents" app sh -c "npm install && sh"
+
+shelll:
+	docker-compose run --rm --workdir="/opt/app/contents" app sh
+
 logs:
 	docker logs basic-docker_app_1
+
+goInside:
+	docker exec -it --workdir="/opt/app/contents" basic-docker_app_1 sh
