@@ -9,6 +9,11 @@ You may take a look in the `Makefile` and `docker-compose.yml` files to better u
 # stopping the app
 `make stop`
 
+# running the app in dev mode
+`make dev`
+
+This will run the app that includes dev dependencies and auto restart when files have changed.
+
 # shell into a new container
 `make shell`
 
