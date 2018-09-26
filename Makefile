@@ -19,7 +19,7 @@ shelll:
 	docker-compose run --rm -w $(WORKDIR) app sh
 
 logs:
-	docker logs basic-docker_app_1
+	docker-compose logs
 
-goInside:
-	docker exec -it --workdir=$(WORKDIR) basic-docker_app_1 sh
+exec:
+	docker-compose exec -w $(WORKDIR) app sh

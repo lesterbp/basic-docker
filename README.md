@@ -24,12 +24,10 @@ When doing this `npm install` automatically run so that it's ready for you to ru
 
 Same as `make shell` but will not run `npm install` thus the extra "l" in the shelll because it's a bit lighter ;-)
 
-# print the logs of the running app container
+# print the logs of the containers
 `make logs`
 
-List down the logs inside the container, this assumes that the container name is basic-docker_app_1 but it could sometimes change. You may do `docker ps` to list down all running containers
-
 # go inside the actual running app container
-`make goInside`
+`make exec`
 
-Goes inside the started app, it assumes container name is basic-docker_app_1. Might be useful when you want to take a look inside the container of a running app.
+Goes inside the started app. Might be useful when you want to take a look inside the container of a running app.
