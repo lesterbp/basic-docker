@@ -1,10 +1,18 @@
 version: '3.7'
 services:
   app:
+    # node is the image and 8-alpine is the tag
     image: node:8-alpine
     volumes:
-      - ./basic-nodejs-api/src:/opt/app/src
-      - ./Makefile:/opt/app/Makefile
+      - ./basic-nodejs-api:/opt/app/contents
+      # the pattern below is used when you want to
+      # exclude a subfolder inside a mounted folder
+      - /opt/app/contents/node_modules
+      - ./app.sh:/opt/app/app.sh
     working_dir: /opt/app
     ports:
+      # the first port number is the port number to be exposed
+      # the second is the app's port number in the container
       - 3001:3001
+      - 3002:3002
+    command: ./app.sh
