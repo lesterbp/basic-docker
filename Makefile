@@ -37,7 +37,7 @@ exec:
 # Building for deployable (to production) images
 ################################################
 startImage:
-	docker run --name basic-nodejs-api_app --rm -p 3001:3001 -p 3002:3002 $(IMAGE_HASH_TAG) npm start
+	docker run --name basic-nodejs-api_app --rm -p 3001:3001 -p 3002:3002 $(IMAGE_HASH_TAG)
 
 pullImage:
 	make _dockerLogin
