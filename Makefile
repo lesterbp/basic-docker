@@ -51,10 +51,11 @@ pushImage:
 
 buildImage:
 	make _updateSubmodule
-	docker build -t $(IMAGE_HASH_TAG) -t $(IMAGE_LATEST_TAG) -f ./app.dockerfile ./$(APP_DIR)
+	docker build --no-cache -t $(IMAGE_HASH_TAG) -t $(IMAGE_LATEST_TAG) -f ./app.dockerfile ./$(APP_DIR)
 
 _updateSubmodule:
 	cd $(APP_DIR) && \
+	git checkout master && \
 	git pull
 
 _dockerLogin:
