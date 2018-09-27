@@ -1,7 +1,12 @@
 # basic-docker
 Basic usage of docker by using 3 musketeers methodology https://3musketeers.io/docs/get-started/
-This repo uses the app in the repo `/lesterbp/basic-nodejs-api` as its submodule and dockerizes it.
-You may take a look in the `Makefile` and `docker-compose.yml` files to better understand the implementation.
+You may take a look in the `Makefile`, `docker-compose.yml` and `app.dockerfile` files to better understand the implementation.
+
+# initialize the submodule first
+`git submodule init`
+`git submodule update`
+
+This repo uses the app in the repo `https://github.com/lesterbp/basic-nodejs-api` as its submodule and dockerizes it. You'll need to initialize and update the submodule before you do anything else.
 
 # running the app
 `make start`
