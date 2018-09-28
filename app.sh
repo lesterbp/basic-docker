@@ -1,6 +1,5 @@
 #!/bin/sh
 
-cd contents
 echo "installing nodeJS dependencies"
 npm cache verify
 npm install --prod

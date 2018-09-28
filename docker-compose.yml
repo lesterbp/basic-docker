@@ -3,16 +3,17 @@ services:
   app:
     # node is the image and 8-alpine is the tag
     image: node:8-alpine
+    env_file: ./basic-nodejs-api/.env
     volumes:
-      - ./basic-nodejs-api:/opt/app/contents
+      - ./basic-nodejs-api:/opt/app/basic-nodejs-api
+      - ./app.sh:/opt/app/app.sh
       # the pattern below is used when you want to
       # exclude a subfolder inside a mounted folder
-      - /opt/app/contents/node_modules
-      - ./app.sh:/opt/app/app.sh
-    working_dir: /opt/app
+      - /opt/app/basic-nodejs-api/node_modules
+    working_dir: /opt/app/basic-nodejs-api
     ports:
       # the first port number is the port number to be exposed
       # the second is the app's port number in the container
       - 3001:3001
       - 3002:3002
-    command: ./app.sh
+    command: ../app.sh

@@ -1,65 +1,82 @@
 include .env
 export
 
-IMAGE_NAME=$$dockerImageRepoUser/basic-nodejs-api
+APPLICATION=basic-nodejs-api
+CONTAINER_NAME=$(APPLICATION)_app
+IMAGE_NAME=$$DOCKER_REPO_USERNAME/$(APPLICATION)
 IMAGE_HASH_TAG=$(IMAGE_NAME):$(SUBMODULE_HASH)
 IMAGE_LATEST_TAG=$(IMAGE_NAME):LATEST
-APP_DIR=basic-nodejs-api
-WORKDIR=/opt/app/contents
-SUBMODULE_HASH=$$(cd $(APP_DIR) && git log -1 --pretty=%h)
+SUBMODULE_HASH=$$(cd $(APPLICATION) && git log -1 --pretty=%h)
 
-start:
-	docker-compose up --detach --build app
+# This is part of the 3 musketeers guide
+# to import the application's environment variables to the container
+# to be used in running "deployable image" (`make startImage`)
+# you may override an env file to be used `ENVFILE=another.env make startImage`
+ifdef ENVFILE
+	PREP_ENVFILE=copyEnvfile
+else
+	# Don't be confused, this executes the target (make command) at the bottom part
+	PREP_ENVFILE=$(APPLICATION)/.env
+endif
+
+##################################################
+# During development (or for non-prod) purposes
+##################################################
+
+start: $(PREP_ENVFILE)
+	docker-compose up -d --build app
 
 stop:
 	docker-compose down
 
-dev:
-	docker-compose run --rm -w $(WORKDIR) -p 3001:3001 -p 3002:3002 app sh -c "npm install && npm run dev"
+dev: $(PREP_ENVFILE)
+	docker-compose run --rm -p 3001:3001 -p 3002:3002 app sh -c "npm install && npm run dev"
 
-unitTest:
-	docker-compose run --rm -w $(WORKDIR) app sh -c "npm install && npm test"
+unitTest: $(PREP_ENVFILE)
+	docker-compose run --rm app sh -c "npm install && npm test"
 
-shell:
-	docker-compose run --rm -w $(WORKDIR) app sh -c "npm install && sh"
+shell: $(PREP_ENVFILE)
+	docker-compose run --rm app sh -c "npm install && sh"
 
-shelll:
-	docker-compose run --rm -w $(WORKDIR) app sh
+shelll: $(PREP_ENVFILE)
+	docker-compose run --rm app sh
 
 logs:
 	docker-compose logs
 
 exec:
-	docker-compose exec -w $(WORKDIR) app sh
+	docker-compose exec app sh
 
 
-################################################
-# Building for deployable (to production) images
-################################################
-startImage:
-	docker run --name basic-nodejs-api_app --rm -p 3001:3001 -p 3002:3002 $(IMAGE_HASH_TAG)
+##################################################
+# Building for deployable (production ready) image
+##################################################
 
-pullImage:
-	make _dockerLogin
+startImage: $(PREP_ENVFILE)
+	docker run --env-file $(APPLICATION)/.env --name $(CONTAINER_NAME) --rm -p 3001:3001 -p 3002:3002 $(IMAGE_HASH_TAG)
+
+pullImage: dockerLogin
+	make dockerLogin
 	docker pull $(IMAGE_HASH_TAG)
-	make _dockerLogout
 
-pushImage:
-	make _dockerLogin
+pushImage: dockerLogin
 	docker push $(IMAGE_NAME)
-	make _dockerLogout
 
-buildImage:
-	make _updateSubmodule
-	docker build --no-cache -t $(IMAGE_HASH_TAG) -t $(IMAGE_LATEST_TAG) -f ./app.dockerfile ./$(APP_DIR)
+buildImage: updateSubmodule
+	docker build --no-cache -t $(IMAGE_HASH_TAG) -t $(IMAGE_LATEST_TAG) -f app.dockerfile ./$(APPLICATION)
 
-_updateSubmodule:
-	cd $(APP_DIR) && \
+updateSubmodule:
+	cd $(APPLICATION) && \
 	git checkout master && \
 	git pull
 
-_dockerLogin:
-	docker login -u $$dockerImageRepoUser -p $$dockerImageRepoPassword
+dockerLogin:
+	docker login -u $$DOCKER_REPO_USERNAME -p $$DOCKER_REPO_PASSWORD
 
-_dockerLogout:
-	docker logout
+copyEnvfile:
+	cp $(ENVFILE) $(APPLICATION)/.env
+
+# Create application's .env based on .env.template if .env does not exist
+# ie. if the .env file in the application dir exist, it won't execute the commands in it
+$(APPLICATION)/.env:
+	cp $(APPLICATION)/.env.template $(APPLICATION)/.env

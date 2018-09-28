@@ -2,7 +2,11 @@ FROM node:8-alpine
 
 WORKDIR /opt/app/basic-nodejs-api
 
-COPY src ./src
+# be careful when copying folders
+# make sure files with senstive information are not included
+# you may want to use .dockerignore file
+# or just copy only the files and folders you need
+COPY src src
 COPY package-lock.json .
 COPY package.json .
 
