@@ -5,11 +5,12 @@ services:
     image: node:8-alpine
     env_file: ./basic-nodejs-api/.env
     volumes:
-      - ./basic-nodejs-api:/opt/app/basic-nodejs-api
+      # only mounting specific folder and files to avoid including senstive data
+      - ./basic-nodejs-api/src:/opt/app/basic-nodejs-api/src
+      - ./basic-nodejs-api/test:/opt/app/basic-nodejs-api/test
+      - ./basic-nodejs-api/package.json:/opt/app/basic-nodejs-api/package.json
+      - ./basic-nodejs-api/package-lock.json:/opt/app/basic-nodejs-api/package-lock.json
       - ./app.sh:/opt/app/app.sh
-      # the pattern below is used when you want to
-      # exclude a subfolder inside a mounted folder
-      - /opt/app/basic-nodejs-api/node_modules
     working_dir: /opt/app/basic-nodejs-api
     ports:
       # the first port number is the port number to be exposed
