@@ -56,7 +56,6 @@ startImage: $(PREP_ENVFILE)
 	docker run --env-file $(APPLICATION)/.env --name $(CONTAINER_NAME) --rm -p 3001:3001 -p 3002:3002 $(IMAGE_HASH_TAG)
 
 pullImage: dockerLogin
-	make dockerLogin
 	docker pull $(IMAGE_HASH_TAG)
 
 pushImage: dockerLogin
